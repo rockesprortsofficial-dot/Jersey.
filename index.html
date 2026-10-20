@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROCK ESPORTS Jersey — Rotation Preview</title>
+<style>
+:root{color-scheme:dark;--cyan:#00d9ff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 20%,#12365b 0,#071322 48%,#02060d 100%);font-family:Arial,Helvetica,sans-serif;color:#fff;display:grid;place-items:center;padding:22px}
+.wrap{width:min(100%,760px);text-align:center}
+h1{font-size:clamp(22px,4vw,34px);letter-spacing:2px;margin:0 0 7px}
+.sub{color:#a9d9e8;margin:0 0 18px;font-size:14px}
+.viewer{position:relative;border:1px solid #1a7897;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#06101d,#0b2942);box-shadow:0 0 38px #00bfff25;touch-action:pan-y;user-select:none}
+img{display:block;width:100%;height:min(76vh,850px);object-fit:contain;pointer-events:none}
+.hint{padding:13px;color:#c9eefa;font-size:13px}
+.controls{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:15px}
+button{background:#082c45;color:#fff;border:1px solid #00bfe8;border-radius:10px;padding:11px 17px;font-size:14px;font-weight:700}
+button:active{background:#07516b}
+#counter{min-width:85px;color:#8deaff;font-variant-numeric:tabular-nums}
+.note{font-size:12px;line-height:1.5;color:#92aaba;margin:17px auto 0;max-width:620px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>ROCK ESPORTS</h1>
+  <p class="sub">JERSEY ROTATION PREVIEW</p>
+  <section class="viewer" id="viewer" aria-label="Drag left or right to change jersey view">
+    <img id="jersey" src="images/angle-01.jpg" alt="ROCK ESPORTS jersey view">
+    <div class="hint">Drag left/right or use the buttons to view the supplied angles</div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">← PREVIOUS</button>
+    <span id="counter">ANGLE 1 / 6</span>
+    <button id="next" type="button">NEXT →</button>
+    <button id="auto" type="button">▶ AUTO ROTATE</button>
+  </div>
+  <p class="note">Preview made from the photos supplied in this chat. This is an interactive multi-angle photo viewer, not a fully modeled 3D garment yet. It does not alter the jersey proportions or redesign the logo, flag, or graphics.</p>
+</main>
+<script>
+const frames = ["angle-01.jpg","angle-02.jpg","angle-03.jpg","angle-04.jpg","angle-05.jpg","angle-06.jpg"];
+const img = document.getElementById("jersey");
+const counter = document.getElementById("counter");
+const viewer = document.getElementById("viewer");
+let index = 0, timer = null, startX = null, moved = false;
+function show(n){ index=(n+frames.length)%frames.length; img.src="images/"+frames[index]; counter.textContent=`ANGLE ${index+1} / ${frames.length}`; }
+document.getElementById("prev").onclick=()=>show(index-1);
+document.getElementById("next").onclick=()=>show(index+1);
+document.getElementById("auto").onclick=()=>{
+  const b=document.getElementById("auto");
+  if(timer){clearInterval(timer);timer=null;b.textContent="▶ AUTO ROTATE";}
+  else{timer=setInterval(()=>show(index+1),1100);b.textContent="Ⅱ PAUSE";}
+};
+viewer.addEventListener("pointerdown",e=>{startX=e.clientX;moved=false;viewer.setPointerCapture(e.pointerId);});
+viewer.addEventListener("pointerup",e=>{
+  if(startX===null)return;
+  const dx=e.clientX-startX;
+  if(Math.abs(dx)>18){show(index+(dx<0?1:-1));moved=true;}
+  startX=null;
+});
+viewer.addEventListener("keydown",e=>{if(e.key==="ArrowRight")show(index+1);if(e.key==="ArrowLeft")show(index-1);});
+</script>
+</body>
+</html>
